@@ -637,7 +637,7 @@ CKPT:          DEFB &EF            ;150 CLOCK PORT
 BEEPT:         DEFW &0085          ;151 (2) BEEP TIME
 XXPTR:         DEFW 0              ;(2) 153 XPTR STORE
 
-               DEFB SYNTAX-CTAB/3  ;153 NO. OF CMDS IN CTAB
+               DEFB (SYNTAX-CTAB)/3 ;153 NO. OF CMDS IN CTAB
 
 ;CMD VALUE AND ADDR TABLE
 L42BC: ;*
