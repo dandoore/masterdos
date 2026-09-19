@@ -171,22 +171,27 @@ fields describe the disk rather than the file:
 $`195 \times 8 = 1560`$, exactly the data sectors of an 80-track double-sided disk with a four-track
 directory.
 
-**Bit ordering is little-endian within each byte, and the sequence starts at the first data sector:**
+**Bit ordering is little-endian within each byte, and the sequence starts at track 4 sector 1 whatever
+`DTKS` is:**
 
 | Byte | Bit | Track | Sector |
 |---|---|---|---|
-| 0 | 0 | `DTKS` | 1 |
-| 0 | 1 | `DTKS` | 2 |
-| 0 | 7 | `DTKS` | 8 |
-| 1 | 0 | `DTKS` | 9 |
-| 1 | 2 | `DTKS`+1 | 1 |
+| 0 | 0 | 4 | 1 |
+| 0 | 1 | 4 | 2 |
+| 0 | 7 | 4 | 8 |
+| 1 | 0 | 4 | 9 |
+| 1 | 2 | 5 | 1 |
 | … | | | |
 | 94 | 7 | 79 | 10 |
 | 95 | 0 | 128 | 1 |
 
 On a standard disk `DTKS` is 4, and the map is exactly the one SAMDOS produces. On a disk with a larger
-directory the map still starts at the first data track, so the bit positions shift and the top of the map goes
-unused — which is why a bigger directory costs data capacity twice over.
+directory the origin does **not** move: the map's first bytes then lie inside the directory, and `FDHR`
+at `&4B52`–`&4B81` marks them used as the scan starts, byte 0 bit 0 excepted — the author's comment there
+calls it "T4,S1", and `STATS` at `&5C62` adds that sector back as data when `DTKS` is 5 or more, because an
+extended directory skips track 4 sector 1 (`FDHe` at `&4CA7`, `SNDF4` at `&5ED7`). So the top of the map is
+not wasted; the bottom is spent on directory tracks instead. (An earlier version of this paragraph said the
+origin followed `DTKS`; the marking code shows it cannot, since there would then be nothing to mark.)
 
 **The map is used three ways:**
 
